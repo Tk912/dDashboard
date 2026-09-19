@@ -1,0 +1,44 @@
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+# הגדרות תצוגה בסיסיות לדף
+st.set_page_config(page_title="דשבורד איקומרס", layout="wide")
+
+st.title("📊 דשבורד שיווק דיגיטלי - ביצועי קמפיינים")
+st.write("מבט כולל על ביצועי מסעות הלקוח, המרות והכנסות מהקמפיינים האחרונים.")
+
+# יצירת נתונים מדומים (במציאות, כאן אפשר לייבא נתונים ממערכות הדיוור/האוטומציה שלך)
+data = {
+    'שם קמפיין': ['ברוכים הבאים', 'נטישת עגלה', 'מבצע סוף שבוע', 'לקוחות VIP', 'השקת מוצר חדש'],
+    'הודעות שנשלחו': [15000, 4200, 25000, 1800, 12000],
+    'אחוז הקלקה (CTR)': [12.5, 18.2, 5.4, 22.1, 8.7],
+    'הכנסות (שקלים)': [45000, 32000, 85000, 21000, 62000]
+}
+df = pd.DataFrame(data)
+
+# הצגת נתונים מרכזיים בחלק העליון (KPIs)
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("סה״כ הכנסות (₪)", f"{df['הכנסות (שקלים)'].sum():,}")
+with col2:
+    st.metric("סה״כ הודעות שנשלחו", f"{df['הודעות שנשלחו'].sum():,}")
+with col3:
+    st.metric("ממוצע הקלקה", f"{df['אחוז הקלקה (CTR)'].mean():.2f}%")
+
+st.divider()
+
+# יצירת שתי עמודות לגרף ולטבלה
+col_chart, col_table = st.columns([2, 1])
+
+with col_chart:
+    st.subheader("הכנסות לפי קמפיין")
+    # יצירת גרף עמודות אינטראקטיבי
+    fig = px.bar(df, x='שם קמפיין', y='הכנסות (שקלים)', color='שם קמפיין', text_auto=True)
+    st.plotly_chart(fig, use_container_width=True)
+
+with col_table:
+    st.subheader("פירוט נתונים")
+    st.dataframe(df, hide_index=True)
+
+st.info("💡 טיפ: ניתן להחליף את הנתונים המדומים בקובץ CSV אמיתי בלחיצת כפתור.")
